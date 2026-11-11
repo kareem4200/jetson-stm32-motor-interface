@@ -1,4 +1,6 @@
 #include "gpio.h"
+#include "stm32f401xc.h"
+#include <stdbool.h>
 
 static bool gpio_is_valid(GPIO_TypeDef *port, uint8_t pin, gpio_mode_t mode) {
     return (port != NULL) && ((unsigned int)pin < 16U) && ((unsigned int)mode <= GPIO_MODE_ANALOG);
@@ -40,5 +42,9 @@ void gpio_toggle_pin(GPIO_TypeDef *port, uint8_t pin) {
     } else {
         port->BSRR = (1U << pin); // set pin high
     }
+}
+
+gpio_pin_state_t gpio_read_pin(GPIO_TypeDef *port, uint8_t pin) {
+    return (port->IDR & (1U << pin)) ? GPIO_PIN_HIGH : GPIO_PIN_LOW;
 }
 
