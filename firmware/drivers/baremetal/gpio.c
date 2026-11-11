@@ -11,6 +11,13 @@ void gpio_init(GPIO_TypeDef *port, uint8_t pin, gpio_mode_t mode, gpio_otype_t o
         return;
     }
 
+    // enable the peripheral clock for the GPIO port
+    // the spacing between each GPIOx base address is 0x400 and to enable the clock, bits {0-4} in RCC->AHB1ENR are used for GPIOA-GPIOE respectively
+    // TODO: Replace this with a lookup table that maps GPIO_TypeDef pointers to their corresponding RCC_AHB1ENR masks in stm32f401xc.h
+    uintptr_t addr = (uintptr_t)port;
+    uint32_t index = (addr - GPIOA_BASE) / 0x400U;
+    RCC->AHB1ENR |= (1U << index);
+
     // set pin mode using MODER
     port->MODER &= ~(3U << (pin * 2));
     port->MODER |= (mode << (pin * 2));
