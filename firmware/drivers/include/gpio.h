@@ -35,7 +35,7 @@ typedef enum {
 } gpio_pin_state_t;
 
 // GPIO function declarations
-void gpio_init(GPIO_TypeDef *port, uint8_t pin, gpio_mode_t mode, gpio_otype_t otype, gpio_ospeed_t ospeed, gpio_pupd_t pupd);
+void gpio_init(GPIO_TypeDef *port, uint8_t pin, gpio_mode_t mode, gpio_otype_t otype, gpio_ospeed_t ospeed, gpio_pupd_t pupd, uint32_t af);
 void gpio_write_pin(GPIO_TypeDef *port, uint8_t pin, gpio_pin_state_t state);
 void gpio_toggle_pin(GPIO_TypeDef *port, uint8_t pin);
 gpio_pin_state_t gpio_read_pin(GPIO_TypeDef *port, uint8_t pin);
