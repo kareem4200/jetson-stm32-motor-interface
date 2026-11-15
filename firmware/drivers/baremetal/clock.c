@@ -11,20 +11,35 @@ static const uint32_t APB_PRESCALER_TABLE[8] = {
     1U, 1U, 1U, 1U, 2U, 4U, 8U, 16U
 };
 
-void clock_init(void) {
+clock_status_t clock_init(void) {
+    uint32_t timeout = CLOCK_STARTUP_POLL_LIMIT;
     // enable HSI clock (16 MHz) and wait for it to be ready
     RCC->CR |= RCC_CR_HSION;
-    // TODO: Implement a timeout mechanism instead of infinite waiting
-    while ((RCC->CR & RCC_CR_HSIRDY) == 0U) { }
+    while ((RCC->CR & RCC_CR_HSIRDY) == 0U) {
+        if (timeout == 0U) {
+            return CLOCK_ERROR_TIMEOUT;
+        }
+        timeout--;
+    }
 
     // select HSI as system clock (SW = 00) and wait for it to be used
+    timeout = CLOCK_STARTUP_POLL_LIMIT;
     RCC->CFGR &= ~RCC_CFGR_SW;
-    while ((RCC->CFGR & RCC_CFGR_SWS) != 0U) { }
+    // wont be applicable later when I allow all clock sources
+    while ((RCC->CFGR & RCC_CFGR_SWS) != 0U) {
+        if (timeout == 0U) {
+            return CLOCK_ERROR_TIMEOUT;
+        }
+        timeout--;
+    }
 
     // configure AHB, APB1, and APB2 prescalers (no division)
     RCC->CFGR &= ~RCC_CFGR_HPRE;
     RCC->CFGR &= ~RCC_CFGR_PPRE1;
+    // RCC->CFGR |= (0x4U << RCC_CFGR_PPRE1_Pos);
     RCC->CFGR &= ~RCC_CFGR_PPRE2;
+
+    return CLOCK_OK;
 }
 
 uint32_t clock_get_hclk_hz(void) {
