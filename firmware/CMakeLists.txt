@@ -15,7 +15,7 @@ add_executable(firmware
     app/main.c
     drivers/baremetal/gpio.c
     drivers/baremetal/clock.c
-    # drivers/baremetal/pwm.c
+    drivers/baremetal/pwm.c
     startup/startup_stm32f401xx.S
     startup/syscall.c
     startup/sysmem.c
