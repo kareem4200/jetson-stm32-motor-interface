@@ -1,6 +1,4 @@
-#include <stdint.h>
 #include "clock.h"
-#include "stm32f401xc.h"
 
 static const uint32_t AHB_PRESCALER_TABLE[16] = {
     1U, 1U, 1U, 1U, 1U, 1U, 1U, 1U,

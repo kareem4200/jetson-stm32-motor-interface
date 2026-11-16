@@ -1,6 +1,7 @@
 #ifndef DRIVERS_CLOCK_H_
 #define DRIVERS_CLOCK_H_
 
+#include "stm32f401xc.h"
 #include <stdint.h>
 
 #define CLOCK_STARTUP_POLL_LIMIT 1000000U

@@ -2,6 +2,9 @@
 #define DRIVERS_GPIO_H_
 
 #include "stm32f401xc.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
 
 typedef enum {
     GPIO_MODE_INPUT = 0U,

@@ -1,6 +1,4 @@
 #include "pwm.h"
-#include "stm32f401xc.h"
-#include <stdbool.h>
 
 // my application only needs TIM1, TIM2, TIM3. Timers 9-11 have less than 4 channels and
 // the switch statement below does not handle the case if a user inputs a wrong channel
