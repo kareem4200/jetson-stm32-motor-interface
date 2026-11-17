@@ -21,7 +21,7 @@ struct timer_clk_bus_mapping {
 
 pwm_status_t pwm_timer_init(TIM_TypeDef *timer, uint32_t pwm_freq_hz);
 pwm_status_t pwm_channel_init(TIM_TypeDef *timer, uint8_t channel);
-pwm_status_t pwm_set_duty_cycle(TIM_TypeDef *timer, uint8_t channel, uint32_t duty_cycle);
+pwm_status_t pwm_set_duty_cycle(TIM_TypeDef *timer, uint8_t channel, uint8_t duty_cycle);
 // void pwm_start(TIM_TypeDef *timer);
 
 #endif // DRIVERS_PWM_H_

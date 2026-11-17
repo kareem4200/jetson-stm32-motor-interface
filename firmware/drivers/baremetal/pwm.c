@@ -145,7 +145,7 @@ pwm_status_t pwm_channel_init(TIM_TypeDef *timer, uint8_t channel) {
     return PWM_STATUS_OK;
 }
 
-pwm_status_t pwm_set_duty_cycle(TIM_TypeDef *timer, uint8_t channel, uint32_t duty_cycle) {
+pwm_status_t pwm_set_duty_cycle(TIM_TypeDef *timer, uint8_t channel, uint8_t duty_cycle) {
     if (timer == NULL || channel < 1U || channel > 4U || duty_cycle > 100U) {
         return PWM_STATUS_ERROR;
     }
