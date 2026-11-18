@@ -55,7 +55,7 @@ motor_status_t motors_init(void) {
             .mode = GPIO_MODE_ALTERNATE,
             .otype = GPIO_OTYPE_PUSH_PULL,
             .ospeed = GPIO_OSPEED_LOW,
-            .pupd = GPIO_PUPD_NONE,
+            .pupd = GPIO_PUPD_PULL_DOWN,
             .af = motor->pwm_af
         };
 
@@ -103,10 +103,11 @@ motor_status_t motors_init(void) {
 }
 
 static motor_status_t motor_set_direction(motor_id_t motor_id, bool forward) {
-    const motor_config_t *motor = &motor_configs[motor_id];
     if (motor_id < MOTOR_FRONT_LEFT || motor_id > MOTOR_REAR_RIGHT) {
         return MOTOR_STATUS_ERROR;
     }
+
+    const motor_config_t *motor = &motor_configs[motor_id];
 
     if (forward) {
         gpio_write_pin(motor->in1_port, motor->in1_pin, GPIO_PIN_HIGH);
@@ -132,16 +133,8 @@ motor_status_t motor_set_duty_cycle(motor_id_t motor_id, int8_t duty) {
         return motor_stop(motor_id);
     }
 
-    // const motor_config_t *motor = &motor_configs[motor_id];
-
     motor_states[motor_id].target_duty_cycle = duty;
-
-    // TODO: split responsibility of setting duty cycle to the motor state struct and 
-    // then an apply fn that actually applies it after checking direction and delaying for the motor to stop if direction changed
-    // delaying should be the time it takes for the next CCR update, which is 1/(PWM_FREQUENCY_HZ) seconds. 
-    // This is because the motor will not stop immediately, and we need to wait for the next CCR update to apply the new duty cycle.
     
-
     return MOTOR_STATUS_OK;
 }
 
@@ -182,10 +175,11 @@ motor_status_t motor_all_update(void) {
 }
 
 motor_status_t motor_stop(motor_id_t motor_id) {
-    const motor_config_t *motor = &motor_configs[motor_id];
     if (motor_id < MOTOR_FRONT_LEFT || motor_id > MOTOR_REAR_RIGHT) {
         return MOTOR_STATUS_ERROR;
     }
+
+    const motor_config_t *motor = &motor_configs[motor_id];
 
     // Set both direction pins low to stop the motor
     gpio_write_pin(motor->in1_port, motor->in1_pin, GPIO_PIN_LOW);
