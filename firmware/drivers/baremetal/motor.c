@@ -19,10 +19,10 @@ static const motor_config_t motor_configs[4] = {
 };
 
 static motor_state_t motor_states[4] = {
-    {0, true}, // MOTOR_FRONT_LEFT
-    {0, true}, // MOTOR_FRONT_RIGHT
-    {0, true}, // MOTOR_REAR_LEFT
-    {0, true}  // MOTOR_REAR_RIGHT
+    {0, 0}, // MOTOR_FRONT_LEFT
+    {0, 0}, // MOTOR_FRONT_RIGHT
+    {0, 0}, // MOTOR_REAR_LEFT
+    {0, 0}  // MOTOR_REAR_RIGHT
 };
 
 motor_status_t motors_init(void) {
@@ -102,9 +102,9 @@ motor_status_t motors_init(void) {
     return MOTOR_STATUS_OK;
 }
 
-static motor_status_t set_motor_direction(motor_id_t motor_id, bool forward) {
+static motor_status_t motor_set_direction(motor_id_t motor_id, bool forward) {
     const motor_config_t *motor = &motor_configs[motor_id];
-    if (motor_id > MOTOR_FRONT_LEFT || motor_id < MOTOR_REAR_RIGHT) {
+    if (motor_id < MOTOR_FRONT_LEFT || motor_id > MOTOR_REAR_RIGHT) {
         return MOTOR_STATUS_ERROR;
     }
 
@@ -120,8 +120,7 @@ static motor_status_t set_motor_direction(motor_id_t motor_id, bool forward) {
 }
 
 motor_status_t motor_set_duty_cycle(motor_id_t motor_id, int8_t duty) {
-    // Implementation for setting motor duty cycle
-    if (motor_id > MOTOR_FRONT_LEFT || motor_id < MOTOR_REAR_RIGHT) {
+    if (motor_id < MOTOR_FRONT_LEFT || motor_id > MOTOR_REAR_RIGHT) {
         return MOTOR_STATUS_ERROR;
     }
     
@@ -133,38 +132,58 @@ motor_status_t motor_set_duty_cycle(motor_id_t motor_id, int8_t duty) {
         return motor_stop(motor_id);
     }
 
-    const motor_config_t *motor = &motor_configs[motor_id];
+    // const motor_config_t *motor = &motor_configs[motor_id];
+
+    motor_states[motor_id].target_duty_cycle = duty;
 
     // TODO: split responsibility of setting duty cycle to the motor state struct and 
     // then an apply fn that actually applies it after checking direction and delaying for the motor to stop if direction changed
     // delaying should be the time it takes for the next CCR update, which is 1/(PWM_FREQUENCY_HZ) seconds. 
     // This is because the motor will not stop immediately, and we need to wait for the next CCR update to apply the new duty cycle.
-    bool direction = (duty >= 0);
-    // If the direction has changed, stop the motor first and then reverse direction
-    if (motor_states[motor_id].direction ^ direction) {
-        pwm_status_t duty_cycle_status = pwm_set_duty_cycle(motor->timer, motor->channel, 0U);
+    
+
+    return MOTOR_STATUS_OK;
+}
+
+motor_status_t motor_all_update(void) {
+    for (uint8_t i = 0; i < 4; i++) {
+        const motor_config_t *motor = &motor_configs[i];
+        
+        // the time it takes for the next CCR update.
+        uint16_t delay_time_us = 1000000U / PWM_FREQUENCY_HZ; // convert to microseconds
+        bool current_direction = (motor_states[i].applied_duty_cycle > 0);
+        bool target_direction = (motor_states[i].target_duty_cycle > 0);
+        
+        // If the direction has changed, stop the motor first, wait for 100 us and then reverse direction
+        if ((motor_states[i].applied_duty_cycle != 0) && 
+            (motor_states[i].target_duty_cycle != 0) && 
+            (current_direction ^ target_direction)) {
+            pwm_status_t duty_cycle_status = pwm_set_duty_cycle(motor->timer, motor->channel, 0U);
+            if (duty_cycle_status != PWM_STATUS_OK) {
+                return MOTOR_STATUS_ERROR;
+            }
+            delay_us(delay_time_us);
+        }
+        uint8_t magnitude = (uint8_t)(target_direction ? motor_states[i].target_duty_cycle : -motor_states[i].target_duty_cycle);
+
+        motor_status_t direction_status = motor_set_direction(motor->id, target_direction);
+        if (direction_status != MOTOR_STATUS_OK) {
+            return MOTOR_STATUS_ERROR;
+        }
+
+        pwm_status_t duty_cycle_status = pwm_set_duty_cycle(motor->timer, motor->channel, magnitude);
         if (duty_cycle_status != PWM_STATUS_OK) {
             return MOTOR_STATUS_ERROR;
         }
-    }
-    uint8_t magnitude = (uint8_t)(direction ? duty : -duty);
 
-    motor_status_t direction_status = set_motor_direction(motor_id, direction);
-    if (direction_status != MOTOR_STATUS_OK) {
-        return MOTOR_STATUS_ERROR;
+        motor_states[i].applied_duty_cycle = motor_states[i].target_duty_cycle;
     }
-
-    pwm_status_t duty_cycle_status = pwm_set_duty_cycle(motor->timer, motor->channel, magnitude);
-    if (duty_cycle_status != PWM_STATUS_OK) {
-        return MOTOR_STATUS_ERROR;
-    }
-
     return MOTOR_STATUS_OK;
 }
 
 motor_status_t motor_stop(motor_id_t motor_id) {
     const motor_config_t *motor = &motor_configs[motor_id];
-    if (motor_id > MOTOR_FRONT_LEFT || motor_id < MOTOR_REAR_RIGHT) {
+    if (motor_id < MOTOR_FRONT_LEFT || motor_id > MOTOR_REAR_RIGHT) {
         return MOTOR_STATUS_ERROR;
     }
 
@@ -176,6 +195,10 @@ motor_status_t motor_stop(motor_id_t motor_id) {
     if (duty_cycle_status != PWM_STATUS_OK) {
         return MOTOR_STATUS_ERROR;
     }
+
+    motor_states[motor_id].applied_duty_cycle = 0;
+    motor_states[motor_id].target_duty_cycle = 0;
+
     return MOTOR_STATUS_OK;
 }
 
