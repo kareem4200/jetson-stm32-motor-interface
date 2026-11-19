@@ -11,12 +11,6 @@ typedef enum {
     CLOCK_BUS_APB2
 } clock_bus_t;
 
-// typedef enum {
-//     CLOCK_SOURCE_HSI,
-//     CLOCK_SOURCE_HSE,
-//     CLOCK_SOURCE_PLL
-// } clock_source_t;
-
 typedef enum {
     CLOCK_OK,
     CLOCK_ERROR_TIMEOUT,

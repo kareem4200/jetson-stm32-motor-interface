@@ -27,9 +27,6 @@ static motor_state_t motor_states[4] = {
 
 motor_status_t motors_init(void) {
     // initialize the timers separately
-    // for (TIM_TypeDef *timer : {TIM1, TIM2, TIM3}) {
-    //     pwm_timer_init(timer, PWM_FREQUENCY_HZ);
-    // }
     TIM_TypeDef *timers_tracker[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
     for (uint8_t i = 0; i < 4; i++) {
