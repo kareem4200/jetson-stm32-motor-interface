@@ -89,6 +89,11 @@ pwm_status_t pwm_timer_init(TIM_TypeDef *timer, uint32_t pwm_freq_hz) {
     timer->EGR |= TIM_EGR_UG;
     timer->CR1 |= (1U << 0);
 
+    if (timer == TIM1) {
+        // enable the main output bit for advanced TIM1
+        timer->BDTR |= TIM_BDTR_MOE;
+    }
+
     return PWM_STATUS_OK;
 }
 
