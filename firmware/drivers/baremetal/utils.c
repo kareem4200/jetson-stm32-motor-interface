@@ -34,8 +34,7 @@ void delay_us(uint32_t us) {
 }
 
 void delay_ms(uint32_t ms) {
-    uint32_t start = TIM4->CNT;
-    while ((uint16_t)(TIM4->CNT - start) < (ms * 1000)) {
-        // wait
+    for (uint32_t i = 0; i < ms; i++) {
+        delay_us(1000U);
     }
 }
