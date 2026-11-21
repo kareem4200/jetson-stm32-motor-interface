@@ -13,6 +13,7 @@ typedef enum {
 
 typedef enum {
     CLOCK_OK,
+    CLOCK_ERROR,
     CLOCK_ERROR_TIMEOUT,
 } clock_status_t;
 

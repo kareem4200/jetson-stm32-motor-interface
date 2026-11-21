@@ -49,29 +49,31 @@ uint32_t clock_get_hclk_hz(void) {
 }
 
 uint32_t clock_get_pclk_hz(clock_bus_t bus) {
-    uint32_t hclk_hz = clock_get_hclk_hz();
     uint32_t pprex = 0U;
     if (bus == CLOCK_BUS_APB1) {
         pprex = (RCC->CFGR & RCC_CFGR_PPRE1) >> RCC_CFGR_PPRE1_Pos;
     } else if (bus == CLOCK_BUS_APB2) {
         pprex = (RCC->CFGR & RCC_CFGR_PPRE2) >> RCC_CFGR_PPRE2_Pos;
     } else {
-        return 0U; // Invalid bus
+        return CLOCK_ERROR;
     }
+
+    uint32_t hclk_hz = clock_get_hclk_hz();
 
     return hclk_hz / APB_PRESCALER_TABLE[pprex];
 }
 
 uint32_t clock_get_timerclk_hz(clock_bus_t bus) {
-    uint32_t pclk_hz = clock_get_pclk_hz(bus);
     uint32_t pprex = 0U;
     if (bus == CLOCK_BUS_APB1) {
         pprex = (RCC->CFGR & RCC_CFGR_PPRE1) >> RCC_CFGR_PPRE1_Pos;
     } else if (bus == CLOCK_BUS_APB2) {
         pprex = (RCC->CFGR & RCC_CFGR_PPRE2) >> RCC_CFGR_PPRE2_Pos;
     } else {
-        return 0U; // Invalid bus
+        return CLOCK_ERROR;
     }
+
+    uint32_t pclk_hz = clock_get_pclk_hz(bus);
 
     if (APB_PRESCALER_TABLE[pprex] > 1U) {
         return pclk_hz * 2U;
