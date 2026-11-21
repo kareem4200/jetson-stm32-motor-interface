@@ -18,15 +18,17 @@ add_executable(firmware
     drivers/baremetal/pwm.c
     drivers/baremetal/motor.c
     drivers/baremetal/utils.c
+    bsp/board.c
     startup/startup_stm32f401xx.S
     startup/syscall.c
     startup/sysmem.c
 )
 
 target_include_directories(firmware PRIVATE
-    third_party/cmsis_core
-    third_party/cmsis_device_f4/include
+    ../3rd_party/cmsis_core
+    ../3rd_party/cmsis_device_f4/include
     drivers/include
+    bsp/include
 )
 
 target_compile_definitions(firmware PRIVATE
