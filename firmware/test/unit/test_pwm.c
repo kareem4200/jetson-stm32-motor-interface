@@ -113,18 +113,20 @@ void test_pwm_set_duty_cycle_invalid_duty_cycle(void)
     TEST_ASSERT_EQUAL(PWM_STATUS_ERROR, status);
 }
 
-void test_duty_value(void)
-{
-    int16_t duty = 50;
-
-    TEST_ASSERT_EQUAL_INT16(50, duty);
-}
-
 int main(void)
 {
     UNITY_BEGIN();
 
-    RUN_TEST(test_duty_value);
+    RUN_TEST(test_pwm_timer_init_null_timer);
+    RUN_TEST(test_pwm_timer_init_zero_freq);
+    RUN_TEST(test_pwm_timer_init_invalid_timer);
+    RUN_TEST(test_pwm_channel_init_null_timer);
+    RUN_TEST(test_pwm_channel_init_invalid_channel);
+    RUN_TEST(test_pwm_channel_init_zero_channel);
+    RUN_TEST(test_pwm_set_duty_cycle_null_timer);
+    RUN_TEST(test_pwm_set_duty_cycle_invalid_channel);
+    RUN_TEST(test_pwm_set_duty_cycle_zero_duty_cycle);
+    RUN_TEST(test_pwm_set_duty_cycle_invalid_duty_cycle);
 
     return UNITY_END();
 }
