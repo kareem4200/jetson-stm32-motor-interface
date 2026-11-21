@@ -160,8 +160,17 @@ pwm_status_t pwm_channel_init(TIM_TypeDef *timer, uint8_t channel) {
 }
 
 pwm_status_t pwm_set_duty_cycle(TIM_TypeDef *timer, uint8_t channel, uint8_t duty_cycle) {
-    if (timer == NULL || channel < 1U || channel > 4U || duty_cycle > 100U) {
+    if (timer == NULL || duty_cycle > 100U) {
         return PWM_STATUS_ERROR;
+    }
+
+    for (size_t i = 0; i < sizeof(timer_clk_bus_map) / sizeof(timer_clk_bus_map[0]); i++) {
+        if (timer_clk_bus_map[i].timer == timer) {
+            if (channel > timer_clk_bus_map[i].num_channels) {
+                return PWM_STATUS_ERROR;
+            }
+            break;
+        }
     }
 
     // convert duty cycle percentage to CCRx value based on the timer's ARR value

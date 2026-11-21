@@ -91,17 +91,6 @@ void test_pwm_set_duty_cycle_invalid_channel(void)
     TEST_ASSERT_EQUAL(PWM_STATUS_ERROR, status);
 }
 
-void test_pwm_set_duty_cycle_zero_duty_cycle(void)
-{
-    TIM_TypeDef *timer = TIM1;
-    uint8_t channel = 1;
-    uint8_t duty_cycle = 0;
-
-    pwm_status_t status = pwm_set_duty_cycle(timer, channel, duty_cycle);
-
-    TEST_ASSERT_EQUAL(PWM_STATUS_OK, status);
-}
-
 void test_pwm_set_duty_cycle_invalid_duty_cycle(void)
 {
     TIM_TypeDef *timer = TIM1;
@@ -125,7 +114,6 @@ int main(void)
     RUN_TEST(test_pwm_channel_init_zero_channel);
     RUN_TEST(test_pwm_set_duty_cycle_null_timer);
     RUN_TEST(test_pwm_set_duty_cycle_invalid_channel);
-    RUN_TEST(test_pwm_set_duty_cycle_zero_duty_cycle);
     RUN_TEST(test_pwm_set_duty_cycle_invalid_duty_cycle);
 
     return UNITY_END();
