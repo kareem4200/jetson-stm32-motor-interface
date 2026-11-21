@@ -15,6 +15,7 @@ typedef enum {
 
 struct timer_clk_bus_mapping {
     TIM_TypeDef *timer;
+    int8_t num_channels;
     clock_bus_t bus;
     uint32_t rcc_apbenr_mask;
 };

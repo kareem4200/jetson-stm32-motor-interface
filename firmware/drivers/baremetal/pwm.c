@@ -2,15 +2,15 @@
 
 // my application only needs TIM1, TIM2, TIM3. Timers 9-11 have less than 4 channels and
 // the switch statement below does not handle the case if a user inputs a wrong channel
-static const struct timer_clk_bus_mapping timer_clk_bus_map[] = {
-    {TIM1, CLOCK_BUS_APB2, RCC_APB2ENR_TIM1EN},
-    {TIM2, CLOCK_BUS_APB1, RCC_APB1ENR_TIM2EN},
-    {TIM3, CLOCK_BUS_APB1, RCC_APB1ENR_TIM3EN},
-    {TIM4, CLOCK_BUS_APB1, RCC_APB1ENR_TIM4EN},
-    {TIM5, CLOCK_BUS_APB1, RCC_APB1ENR_TIM5EN},
-    {TIM9, CLOCK_BUS_APB2, RCC_APB2ENR_TIM9EN},
-    {TIM10, CLOCK_BUS_APB2, RCC_APB2ENR_TIM10EN},
-    {TIM11, CLOCK_BUS_APB2, RCC_APB2ENR_TIM11EN}
+static const struct timer_clk_bus_mapping timer_clk_bus_map[8] = {
+    {TIM1, 4, CLOCK_BUS_APB2, RCC_APB2ENR_TIM1EN},
+    {TIM2, 4, CLOCK_BUS_APB1, RCC_APB1ENR_TIM2EN},
+    {TIM3, 4, CLOCK_BUS_APB1, RCC_APB1ENR_TIM3EN},
+    {TIM4, 4, CLOCK_BUS_APB1, RCC_APB1ENR_TIM4EN},
+    {TIM5, 4, CLOCK_BUS_APB1, RCC_APB1ENR_TIM5EN},
+    {TIM9, 2, CLOCK_BUS_APB2, RCC_APB2ENR_TIM9EN},
+    {TIM10, 1, CLOCK_BUS_APB2, RCC_APB2ENR_TIM10EN},
+    {TIM11, 1, CLOCK_BUS_APB2, RCC_APB2ENR_TIM11EN}
 };
 
 pwm_status_t pwm_timer_init(TIM_TypeDef *timer, uint32_t pwm_freq_hz) {
@@ -98,8 +98,17 @@ pwm_status_t pwm_timer_init(TIM_TypeDef *timer, uint32_t pwm_freq_hz) {
 }
 
 pwm_status_t pwm_channel_init(TIM_TypeDef *timer, uint8_t channel) {
-    if (timer == NULL || channel < 1U || channel > 4U) {
+    if (timer == NULL || channel == 0U) {
         return PWM_STATUS_ERROR;
+    }
+
+    for (size_t i = 0; i < sizeof(timer_clk_bus_map) / sizeof(timer_clk_bus_map[0]); i++) {
+        if (timer_clk_bus_map[i].timer == timer) {
+            if (channel > timer_clk_bus_map[i].num_channels) {
+                return PWM_STATUS_ERROR; // channel number exceeds the number of channels for this timer
+            }
+            break;
+        }
     }
 
     // configure the timer channel as output and pwm mode 1
