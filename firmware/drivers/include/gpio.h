@@ -7,6 +7,11 @@
 #include <stddef.h>
 
 typedef enum {
+    GPIO_STATUS_OK,
+    GPIO_STATUS_ERROR
+} gpio_status_t;
+
+typedef enum {
     GPIO_MODE_INPUT = 0U,
     GPIO_MODE_OUTPUT = 1U,
     GPIO_MODE_ALTERNATE = 2U,
@@ -45,7 +50,7 @@ typedef struct {
 } gpio_config_t;
 
 // GPIO function declarations
-void gpio_init(GPIO_TypeDef *port, uint8_t pin, const gpio_config_t *config);
+gpio_status_t gpio_init(GPIO_TypeDef *port, uint8_t pin, const gpio_config_t *config);
 void gpio_write_pin(GPIO_TypeDef *port, uint8_t pin, gpio_pin_state_t state);
 void gpio_toggle_pin(GPIO_TypeDef *port, uint8_t pin);
 gpio_pin_state_t gpio_read_pin(GPIO_TypeDef *port, uint8_t pin);

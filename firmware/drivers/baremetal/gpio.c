@@ -20,9 +20,9 @@ static void gpio_init_af(GPIO_TypeDef *port, uint8_t pin, uint32_t af) {
     port->AFR[afr_index] |= (af << ((pin % 8U) * 4U));
 }
 
-void gpio_init(GPIO_TypeDef *port, uint8_t pin, const gpio_config_t *config) {
+gpio_status_t gpio_init(GPIO_TypeDef *port, uint8_t pin, const gpio_config_t *config) {
     if (!gpio_is_valid(port, pin, config)) {
-        return;
+        return GPIO_STATUS_ERROR;
     }
 
     // enable the peripheral clock for the GPIO port
@@ -57,6 +57,8 @@ void gpio_init(GPIO_TypeDef *port, uint8_t pin, const gpio_config_t *config) {
     // set pin mode using MODER
     port->MODER &= ~(3U << (pin * 2));
     port->MODER |= (config->mode << (pin * 2));
+
+    return GPIO_STATUS_OK;
 }
 
 void gpio_write_pin(GPIO_TypeDef *port, uint8_t pin, gpio_pin_state_t state) {

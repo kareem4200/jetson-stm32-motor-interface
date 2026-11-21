@@ -4,8 +4,8 @@ project(test LANGUAGES C)
 enable_testing()
 
 SET(TEST_INCLUDE_DIRS
-    ../third_party/cmsis_core
-    ../third_party/cmsis_device_f4/include
+    ../../3rd_party/cmsis_core
+    ../../3rd_party/cmsis_device_f4/include
     ../drivers/include
     ../devices/include
     ../bsp/include
@@ -31,6 +31,6 @@ add_firmware_test(pwm unit/test_pwm.c
     ../drivers/baremetal/clock.c
 )
 
-
-# target_link_libraries(test_pwm PRIVATE unity)
-# add_test(NAME PWM COMMAND test_pwm)
+add_firmware_test(gpio unit/test_gpio.c
+    ../drivers/baremetal/gpio.c
+)
