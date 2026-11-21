@@ -16,8 +16,8 @@ add_executable(firmware
     drivers/baremetal/gpio.c
     drivers/baremetal/clock.c
     drivers/baremetal/pwm.c
-    drivers/baremetal/motor.c
     drivers/baremetal/utils.c
+    devices/motor.c
     bsp/board.c
     startup/startup_stm32f401xx.S
     startup/syscall.c
@@ -28,6 +28,7 @@ target_include_directories(firmware PRIVATE
     ../3rd_party/cmsis_core
     ../3rd_party/cmsis_device_f4/include
     drivers/include
+    devices/include
     bsp/include
 )
 
