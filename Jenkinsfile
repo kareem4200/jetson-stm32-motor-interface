@@ -32,10 +32,10 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running native unit tests...'
-                dir('firmware') {
+                dir('firmware/test') {
                     sh 'cmake --preset Test'
-                    sh 'cmake --build build/Test'
-                    sh 'ctest --test-dir build/Test --output-on-failure'
+                    sh 'cmake --build ../build/Test'
+                    sh 'ctest --test-dir ../build/Test --output-on-failure --no-tests=error'
                 }
             }
         }
