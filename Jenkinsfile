@@ -13,26 +13,29 @@ pipeline {
         }
         stage('Build Debug') {
             steps {
-                echo 'Building...'
-                sh 'cd firmware'
-                sh 'cmake --preset Debug'
-                sh 'cmake --build build/Debug'
+                echo 'Building Debug...'
+                dir('firmware') {
+                    sh 'cmake --preset Debug'
+                    sh 'cmake --build build/Debug'
+                }
             }
         }
         stage('Build Release') {
             steps {
-                echo 'Building...'
-                sh 'cd firmware'
-                sh 'cmake --preset Release'
-                sh 'cmake --build build/Release'
+                echo 'Building Release...'
+                dir('firmware') {
+                    sh 'cmake --preset Release'
+                    sh 'cmake --build build/Release'
+                }
             }
         }
         stage('Test') {
             steps {
                 echo 'Testing...'
-                sh 'cd firmware/test'
-                sh 'cmake --build build/test'
-                sh 'ctest'
+                dir('firmware') {
+                    sh 'cmake --build build/test -DCMAKE_BUILD_TYPE=Debug'
+                    sh 'cd build/test && ctest'
+                }
             }
         }
     }
