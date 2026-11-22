@@ -1,0 +1,16 @@
+FROM jenkins/agent:latest-jdk21
+
+USER root
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        gcc \
+        gcc-arm-none-eabi \
+        binutils-arm-none-eabi \
+        cmake \
+        ninja-build \
+        python3 \
+        git \
+    && rm -rf /var/lib/apt/lists/*
+
+USER jenkins
