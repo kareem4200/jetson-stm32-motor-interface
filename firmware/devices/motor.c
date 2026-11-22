@@ -1,4 +1,5 @@
 #include "motor.h"
+#include "board.h"
 #include "gpio.h"
 #include "pwm.h"
 #include "stm32f401xc.h"
@@ -87,7 +88,7 @@ motor_status_t motors_init(void) {
 }
 
 static motor_status_t motor_set_direction(motor_id_t motor_id, bool forward) {
-    if (motor_id < MOTOR_FRONT_LEFT || motor_id > MOTOR_REAR_RIGHT) {
+    if (motor_id >= MOTOR_COUNT) {
         return MOTOR_STATUS_ERROR;
     }
 
@@ -105,7 +106,7 @@ static motor_status_t motor_set_direction(motor_id_t motor_id, bool forward) {
 }
 
 motor_status_t motor_set_duty_cycle(motor_id_t motor_id, int8_t duty) {
-    if (motor_id < MOTOR_FRONT_LEFT || motor_id > MOTOR_REAR_RIGHT) {
+    if (motor_id >= MOTOR_COUNT) {
         return MOTOR_STATUS_ERROR;
     }
     

@@ -38,3 +38,12 @@ add_firmware_test(gpio unit/test_gpio.c
 add_firmware_test(clock unit/test_clock.c
     ../drivers/baremetal/clock.c
 )
+
+add_firmware_test(motor unit/test_motor.c
+    ../devices/motor.c
+    ../drivers/baremetal/gpio.c
+    ../drivers/baremetal/pwm.c
+    ../drivers/baremetal/clock.c
+    ../drivers/baremetal/utils.c
+    ../bsp/board.c
+)
