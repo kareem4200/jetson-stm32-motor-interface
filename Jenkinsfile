@@ -2,6 +2,12 @@ pipeline {
     agent {label 'stm32-agent'}
 
     stages {
+        stage('Initialize Submodules') {
+            steps {
+                sh 'git submodule sync --recursive'
+                sh 'git submodule update --init --recursive'
+            }
+        }
         stage('Verify Toolchain') {
             steps {
                 echo 'Verifying STM32 build environment...'
