@@ -31,10 +31,11 @@ pipeline {
         }
         stage('Test') {
             steps {
-                echo 'Testing...'
+                echo 'Running native unit tests...'
                 dir('firmware') {
-                    sh 'cmake --build build/test -DCMAKE_BUILD_TYPE=Debug'
-                    sh 'cd build/test && ctest'
+                    sh 'cmake --preset Test'
+                    sh 'cmake --build build/Test'
+                    sh 'ctest --test-dir build/Test --output-on-failure'
                 }
             }
         }
