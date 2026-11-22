@@ -160,7 +160,7 @@ motor_status_t motor_all_update(void) {
 }
 
 motor_status_t motor_stop(motor_id_t motor_id) {
-    if (motor_id < MOTOR_FRONT_LEFT || motor_id > MOTOR_REAR_RIGHT) {
+    if (motor_id >= MOTOR_COUNT) {
         return MOTOR_STATUS_ERROR;
     }
 
