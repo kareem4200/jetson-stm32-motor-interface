@@ -41,9 +41,17 @@ pipeline {
                 dir('firmware/test') {
                     sh 'cmake --preset Test'
                     sh 'cmake --build ../build/Test'
-                    sh 'ctest --test-dir ../build/Test --output-on-failure --no-tests=error'
+                    sh 'ctest --test-dir ../build/Test --output-on-failure --output-junit ../build/Test/ctest-results.xml'
                 }
             }
+        }
+    }
+    post {
+        success {
+            archiveArtifacts(
+            artifacts: 'firmware/build/Debug/firmware.elf,firmware/build/Debug/firmware.bin,firmware/build/Release/firmware.elf,firmware/build/Release/firmware.bin',
+                fingerprint: true
+            )
         }
     }
 }
